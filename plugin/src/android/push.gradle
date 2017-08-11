@@ -1,0 +1,46 @@
+repositories {
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+}
+import java.util.regex.Pattern
+
+def doExtractStringFromManifest(name) {
+    def manifestFile = file(android.sourceSets.main.manifest.srcFile)
+    def pattern = Pattern.compile(name + "=\"(.*?)\"")
+    def matcher = pattern.matcher(manifestFile.getText())
+    matcher.find()
+    return matcher.group(1)
+}
+
+android {
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+
+    defaultConfig {
+        applicationId = doExtractStringFromManifest("package")
+    }
+}
+
+dependencies {
+    compile(name: 'pushwoosh-amazon-multiAppCode-5.0.1', ext: 'aar')
+    compile(name: 'pushwoosh-badge-multiAppCode-5.0.1', ext: 'aar')
+    compile(name: 'pushwoosh-beacon-multiAppCode-5.0.1', ext: 'aar')
+    compile(name: 'pushwoosh-location-multiAppCode-5.0.1', ext: 'aar')
+    compile(name: 'pushwoosh-multiAppCode-5.0.1', ext: 'aar')
+
+    compile 'com.google.android.gms:play-services-gcm:+'
+    compile 'com.google.android.gms:play-services-location:+'
+    compile 'com.android.support:support-v4:25.+'
+}
+
+android {
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
+}
